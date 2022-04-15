@@ -1,14 +1,15 @@
 <template>      
-    <div class="itemsWrapper">
+    <div class="wrapper">
         <h1 id='title'>Pokedex</h1>        
         <PokemonCard v-for="pokemon in pokemons" class="pokemonItem"
-            :name="pokemon.name" 
-            :index="pokemon.index"  
-            :imageUrl="pokemon.imageUrl" 
-            :types="pokemon.types"           
-            :key="pokemon.index"
+            :urlIndex="(pokemon.index)"
+            :index="formatIndex(pokemon.index)"
+            :name="majFirstLetter(pokemon.name)" 
+            :types="majFirstLetterTab(pokemon.types)"
+            :imageUrl="pokemon.imageUrl"          
+            :key="pokemon.urlIndex"
         />              
-    </div>  
+    </div>
 </template>
 
 <script>
@@ -20,11 +21,14 @@ export default {
         PokemonCard
     },
     data(){
-        return {            
+        return {  
+            colors: [],          
             pokemons:[]            
         }        
     },
-    created(){				
+    created(){
+        //Récupération de la liste de couleurs :
+
         fetch('https://pokeapi.co/api/v2/pokemon?limit=151')
         .then(response => response.json())
         .then(response => {	
@@ -34,15 +38,14 @@ export default {
                 .then(response => response.json())
                 .then(response => {	
                     for (let j = 0 ; j < response.types.length ; j++){
-                        types.push(this.majFirstLetter(response.types[j].type.name));
-                        //console.log('Pokemon ' + ( i + 1) + ':' + response.types[j].type.name + '\n');
+                        types.push(response.types[j].type.name);                        
                     }				  				
                 })
                 .catch(error => console.error(error));	  			
                 
                 this.pokemons.push({
-                    index: this.formatIndex((i + 1).toString()),
-                    name: this.majFirstLetter(response.results[i].name),
+                    index: (i + 1).toString(),
+                    name: response.results[i].name,
                     imageUrl: 'https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other/official-artwork/' + (i + 1) + '.png?raw=true',
                     types: types
                 });
@@ -54,50 +57,56 @@ export default {
         majFirstLetter(str) {
             return str.charAt(0).toUpperCase() + str.slice(1);
         },
+        majFirstLetterTab(tab) {
+            tab = tab.map(element => element.charAt(0).toUpperCase() + element.slice(1)); 
+            return tab;
+        },
         formatIndex(index){
             while(index.length < 3){
                 index = '0' + index;
             }
             return index;
         }
-    }    
+    }   
 }
 </script>
 
 <style scoped>
-h1 {
-    font-size: 2rem;
+h1 {    
+    color:black;
 }
 .pokemonItem {
     background-color: #46D0A7;    			
 }
-.itemsWrapper {
+.wrapper {
     justify-content: center;    
 }    
 @media screen and (orientation:portrait) {
+    .wrapper {
+        display: grid;
+        grid-template-columns: repeat(2, 44vw);
+        grid-gap: 4vw;
+        margin-top: 4vw;        
+    }
     .pokemonItem {        
         border-radius: 5vw;
         padding: 4vw;			
-    }
-    .itemsWrapper {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        grid-gap: 4vw	        
-    }
+    }    
     #title {					
         grid-column: 1/3;
     }
     }
     @media screen and (orientation:landscape) {
+    .wrapper {
+        display: grid;
+        grid-template-columns: repeat(4, 22vw);
+        grid-gap: 2vw;
+        margin-top: 2vw;          
+    }
     .pokemonItem {        
         border-radius: 2vw;
         padding: 2vw;			
-    }
-    .itemsWrapper {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        grid-gap: 2vw
-    }
+    }    
     #title {					
         grid-column: 1/5;
     }

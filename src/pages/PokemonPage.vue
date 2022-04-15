@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <div class='wrapper'>
     <PokemonBanner
       :name="name" 
       :index="index"  
       :imageUrl="imageUrl" 
       :types="types"           
       :key="index"
-    />
+    />    
   </div>
 </template>
 
@@ -19,30 +19,26 @@ export default {
     },
     data(){
         return { 
-          index: '',
+          urlIndex: '',
           name: '',
           imageUrl: '',
           types: []           
         }        
     },
     created(){      
-      this.index = this.$route.params.index;            				
-      fetch('https://pokeapi.co/api/v2/pokemon/' + this.unformatIndex(this.$route.params.index))
+      this.urlIndex = this.$route.params.urlIndex;            				
+      fetch('https://pokeapi.co/api/v2/pokemon/' + this.$route.params.urlIndex)
       .then(response => response.json())
       .then(response => {	
         this.name = this.majFirstLetter(response.forms[0].name);
         for (let i = 0 ; i < response.types.length ; i++){
-            this.types.push(this.majFirstLetter(response.types[i].type.name));
-            //console.log('Pokemon ' + ( index) + ':' + response.types[i].type.name + '\n');
+            this.types.push(this.majFirstLetter(response.types[i].type.name));            
         }	
-        this.imageUrl = 'https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other/official-artwork/' + this.unformatIndex(this.index) + '.png?raw=true';
+        this.imageUrl = 'https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other/official-artwork/' + this.urlIndex + '.png?raw=true';
       })
       .catch(error => console.error(error));	  
     },
-    methods: {
-      unformatIndex(index)     {
-        return parseInt(index).toString();
-      },
+    methods: {      
       majFirstLetter(str) {
         return str.charAt(0).toUpperCase() + str.slice(1);
       },
@@ -52,10 +48,15 @@ export default {
         }
         return index;
       }
-    } 
+    },
+    computed: {
+      index(){
+        return this.formatIndex(this.urlIndex);
+      }
+    }
 }
 </script>
 
 <style scoped>
-
+ 
 </style>

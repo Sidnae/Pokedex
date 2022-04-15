@@ -6,29 +6,112 @@ export default {
 </script>
 
 <template>
-    <div class='bannerWrapper'>
-        <p>{{ name }}</p><p>{{ index }}</p>        
-        <div class='typesWrapper'>
-            <p v-for='type in types' :key="type" class='pokemonType'>{{ type }}</p>
+    <div id='bannerWrapper'>
+        <header id='bannerHeader'>
+            <p class='arrowWrapper'><span class="material-icons">arrow_back</span></p>
+            <h1>{{ name }}</h1><p class='pokemonIndex'>#{{ index }}</p>       
+            <div class='typesWrapper'>
+                <p v-for='type in types' :key="type" class='pokemonType'>{{ type }}</p>                
+            </div>
             <div class='imgWrapper'><img :src='imageUrl' alt='Pokemon' class='pokemonImg'></div>
+        </header>
+        <div class='menuWrapper'>
+            <p>About</p>
+            <p>Base stats</p>
+            <p>Evolution</p>
+            <p>Moves</p>        
         </div>
     </div>
 </template>
 
 <style scoped>
-    .bannerWrapper {
-        display: grid;
-        grid-template-columns: auto auto;
+    h1 {
+        color: white;
     }
-    .typesWrapper {
+    #bannerWrapper {
+        width:100%;                 
+    }
+    #bannerHeader {
+        display: grid;
+        grid-template-columns: 1fr 1fr; 
+        align-items: baseline;
+        background-color: #46D0A7;            
+    }
+    .pokemonIndex {
+        font-weight: bold;
+        color:white;
+        font-size:1.2rem;
+    }  
+    .typesWrapper, .arrowWrapper, .imgWrapper {
         grid-column: 1/3;
+    }
+    .typesWrapper {        
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start; 
+        margin-top:1vw;       
+    }    
+    .typesWrapper p:last-child {
+        margin-right: 0;
+    }
+    .arrowWrapper {
+        margin-bottom: 1vw;
+    }
+    .pokemonIndex {
+        text-align: right;
     }
     .imgWrapper {
         width:100%;
         display: flex;
-        justify-content: center;
+        justify-content: center;        
+    }
+    .menuWrapper {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        background-color: white;        
+    }    
+    .material-icons {
+        color:white;
+    }
+    @media screen and (orientation:portrait) {
+    #bannerHeader {        
+        padding:4vw;    
+    }
+    .typesWrapper p {        
+        margin-right: 2vw;
     }
     .pokemonImg {
-        width: 50%;
+        width: 50%;        
+    }
+    .menuWrapper {        
+        border-radius: 6vw 6vw 0 0;
+        margin-top: -12vw;
+    }
+    .menuWrapper p {
+        padding-top: 10vw;
+        padding-left: 2vw;
+        padding-right: 2vw;
+    }
+    }
+    @media screen and (orientation:landscape) {
+    #bannerHeader {        
+        padding:1vw;    
+    }
+    .typesWrapper p {        
+        margin-right: 1vw;
+    }
+    .pokemonImg {
+        width: 10%;
+    }
+    .menuWrapper {        
+        border-radius: 2vw 2vw 0 0;
+        margin-top: -3vw;
+    }
+    .menuWrapper p {
+        padding-top: 3vw;
+        padding-left: 1vw;
+        padding-right: 1vw;
+    }
     }
 </style>

@@ -1,14 +1,15 @@
 <script>
 export default {
     name: 'PokemonCard',
-    props: ['index','name','imageUrl','types']
+    props: ['urlIndex','index','name','imageUrl','types']
 }
+// urlIndex : sans les zéros devant ; index : avec les zéros devant
 </script>
 
 <template>
     <div>
         <p class='index'>#{{ index }}</p>
-        <h2><router-link :to="`/pokemons/${index}`">{{ name }}</router-link></h2>
+        <h2><router-link :to="`/pokemons/${urlIndex}`">{{ name }}</router-link></h2>
         <div class='pokemonContentWrapper'>
             <div class='pokemonTypeWrapper'><p v-for='type in types' :key="type" class='pokemonType'>{{ type }}</p></div>
             <img :src="imageUrl" alt="Pokemon" class='pokemonImg'>            
@@ -17,12 +18,8 @@ export default {
 </template>
 
 <style scoped>
-a {
-    text-decoration: none;
+a {   
     color: white;
-}
-p, h2 {
-	color: white;
 }
 .index {
     width: 100%; 
@@ -38,20 +35,11 @@ p, h2 {
     display: flex;    
     flex-direction: column;
     justify-content: flex-start;    
-    margin-top: 1vw;
-}
-.pokemonType {
-    background-color: rgba(255, 255, 255, 0.2);
-    text-align: center;          
+    margin-top: 1.5vw;
 }
 @media screen and (orientation:portrait) {
 .index {
     font-size: 1.5rem;
-}
-.pokemonType {
-    padding: 3vw 1.5vw 3vw 1.5vw; 
-    border-radius: 1.5rem; 
-    margin-bottom:2vw;
 }
 .pokemonType:last-child {
     margin-bottom:0;
@@ -62,19 +50,14 @@ p, h2 {
 }
 @media screen and (orientation:landscape) {
 .index {
-    font-size:2rem;
+    font-size:1.7rem;
     border-radius: 1.5rem; 
-}
-.pokemonType {
-    padding: 1vw 1.5vw 1vw 1.5vw; 
-    border-radius: 2rem; 
-    margin-bottom:1vw;
 }
 .pokemonType:last-child {
     margin-bottom:0;
 }
 .pokemonImg {
-        width: 11vw;
-    }
+    width: 11vw;
+}
 }    
 </style>
