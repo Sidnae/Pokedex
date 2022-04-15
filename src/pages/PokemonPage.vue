@@ -4,25 +4,32 @@
       :name="name" 
       :index="index"  
       :imageUrl="imageUrl" 
-      :types="types"           
+      :types="types"              
       :key="index"
+    />
+    <PokemonMenu
+      :activeMenuEl="activeMenuEl"
+      @selectedMenu="selectedMenu" 
     />    
   </div>
 </template>
 
 <script>
 import PokemonBanner from '../components/Pokemon/PokemonBanner.vue'
+import PokemonMenu from '../components/Pokemon/PokemonMenu.vue'
 export default {
     name: 'PokemonPage',
     components: {
-        PokemonBanner
+        PokemonBanner,
+        PokemonMenu,
     },
     data(){
         return { 
           urlIndex: '',
           name: '',
           imageUrl: '',
-          types: []           
+          types: [],
+          activeMenuEl: 'About'          
         }        
     },
     created(){      
@@ -36,7 +43,8 @@ export default {
         }	
         this.imageUrl = 'https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other/official-artwork/' + this.urlIndex + '.png?raw=true';
       })
-      .catch(error => console.error(error));	  
+      .catch(error => console.error(error));
+      this.activeLink = 'about';
     },
     methods: {      
       majFirstLetter(str) {
@@ -47,7 +55,10 @@ export default {
             index = '0' + index;
         }
         return index;
-      }
+      },            
+      selectedMenu(event){
+          console.log(event);
+      }    
     },
     computed: {
       index(){

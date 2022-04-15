@@ -8,19 +8,13 @@ export default {
 <template>
     <div id='bannerWrapper'>
         <header id='bannerHeader'>
-            <p class='arrowWrapper'><span class="material-icons">arrow_back</span></p>
+            <p class='arrowWrapper'><router-link :to='`/`'><span class="material-icons">arrow_back</span></router-link></p>
             <h1>{{ name }}</h1><p class='pokemonIndex'>#{{ index }}</p>       
             <div class='typesWrapper'>
                 <p v-for='type in types' :key="type" class='pokemonType'>{{ type }}</p>                
             </div>
             <div class='imgWrapper'><img :src='imageUrl' alt='Pokemon' class='pokemonImg'></div>
-        </header>
-        <div class='menuWrapper'>
-            <p>About</p>
-            <p>Base stats</p>
-            <p>Evolution</p>
-            <p>Moves</p>        
-        </div>
+        </header>        
     </div>
 </template>
 
@@ -64,13 +58,7 @@ export default {
         width:100%;
         display: flex;
         justify-content: center;        
-    }
-    .menuWrapper {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        background-color: white;        
-    }    
+    }       
     .material-icons {
         color:white;
     }
