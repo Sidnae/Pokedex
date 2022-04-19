@@ -7,14 +7,13 @@ export default {
 </script>
 
 <template>
-    <div>
+    <div :class='color'>
         <p class='index'>#{{ index }}</p>
         <h2><router-link :to="`/pokemons/${urlIndex}`">{{ name }}</router-link></h2>
         <div class='pokemonContentWrapper'>
             <div class='pokemonTypeWrapper'><p v-for='type in types' :key="type" class='pokemonType'>{{ type }}</p></div>
             <img :src="imageUrl" alt="Pokemon" class='pokemonImg'>            
-        </div>
-        <p>{{ color }}</p>
+        </div>        
     </div>
 </template>
 

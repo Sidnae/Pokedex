@@ -4,7 +4,8 @@
       :name='name'
       :index='index' 
       :imageUrl='imageUrl' 
-      :types='types'              
+      :types='types'
+      :color='color'             
       :key='index'
     />
     <PokemonMenu
@@ -43,11 +44,14 @@ export default {
           name: '',
           imageUrl: '',
           types: [],
-          activeMenu: 'about'          
+          activeMenu: 'about',
+          color: ''         
         }        
     },
-    created(){           
-      this.urlIndex = this.$route.params.urlIndex;            				
+    created(){
+      //récupération de l'url à afficher :         
+      this.urlIndex = this.$route.params.urlIndex; 
+      //Récupération des données Pokemon : nom et types           				
       fetch('https://pokeapi.co/api/v2/pokemon/' + this.$route.params.urlIndex)
       .then(response => response.json())
       .then(response => {	
@@ -58,6 +62,15 @@ export default {
         this.imageUrl = 'https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other/official-artwork/' + this.urlIndex + '.png?raw=true';
       })
       .catch(error => console.error(error));
+      //Récupération de la couleur :
+      fetch('https://pokeapi.co/api/v2/pokemon-species/' + this.urlIndex)
+        .then(response => response.json())
+        .then(response => {
+            this.color = response.color.name; 
+        })
+        .catch(error => console.error(error));
+
+      //Par défaut la page affiche l'onglet 'about' :
       this.activeLink = 'about';
     },
     methods: {      

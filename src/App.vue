@@ -68,4 +68,35 @@ p {
   /* Support for IE. */
   font-feature-settings: 'liga';
 }
+
+.green {
+  background-color:#6fdea6;
+}
+.red {
+  background-color: #e3686a;
+}
+.yellow {
+  background-color: #FFCE4B;
+}
+.blue {
+  background-color: #82b4e0;
+}
+.purple {
+  background-color: #9F5BBA;
+}
+.brown {
+  background-color: #d17b56;
+}
+.white {
+  background-color: #cff3fa;
+}
+.pink {
+  background-color: #e082d5;
+}
+.gray {
+  background-color: #8c898c;
+}
+.black {
+  background-color: #2e2b2b;
+}
 </style>

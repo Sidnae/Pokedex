@@ -2,7 +2,7 @@
     <div class="wrapper">
         <h1 id='title'>Pokedex</h1>        
         <PokemonCard v-for="pokemon in pokemons" class="pokemonItem"
-            :urlIndex="(pokemon.index)"
+            :urlIndex="pokemon.index"
             :index="formatIndex(pokemon.index)"
             :name="majFirstLetter(pokemon.name)" 
             :color="pokemon.color"
@@ -84,9 +84,9 @@ export default {
             return tab;
         },
         formatIndex(index){
-            while(index.length < 3){
+            while(index.toString().length < 3){
                 index = '0' + index;
-            }
+            }                       
             return index;
         }
     }   
@@ -96,9 +96,6 @@ export default {
 <style scoped>
 h1 {    
     color:black;
-}
-.pokemonItem {
-    background-color: #46D0A7;    			
 }
 .wrapper {
     justify-content: center;    

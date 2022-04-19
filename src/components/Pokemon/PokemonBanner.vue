@@ -1,19 +1,19 @@
 <script>
 export default {
     name: 'PokemonBanner',
-    props: ['index','name','imageUrl','types']
+    props: ['index','name','imageUrl','types','color']
 }
 </script>
 
 <template>
-    <div id='bannerWrapper'>
+    <div id='bannerWrapper' :class='color'>
         <header id='bannerHeader'>
             <p class='arrowWrapper'><router-link :to='`/`'><span class="material-icons">arrow_back</span></router-link></p>
             <h1>{{ name }}</h1><p class='pokemonIndex'>#{{ index }}</p>       
             <div class='typesWrapper'>
                 <p v-for='type in types' :key="type" class='pokemonType'>{{ type }}</p>                
             </div>
-            <div class='imgWrapper'><img :src='imageUrl' alt='Pokemon' class='pokemonImg'></div>
+            <div class='imgWrapper'><img :src='imageUrl' alt='Pokemon' class='pokemonImg'></div>            
         </header>        
     </div>
 </template>
@@ -28,8 +28,7 @@ export default {
     #bannerHeader {
         display: grid;
         grid-template-columns: 1fr 1fr; 
-        align-items: baseline;
-        background-color: #46D0A7;            
+        align-items: baseline;                
     }
     .pokemonIndex {
         font-weight: bold;
