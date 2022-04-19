@@ -5,6 +5,7 @@
             :urlIndex="(pokemon.index)"
             :index="formatIndex(pokemon.index)"
             :name="majFirstLetter(pokemon.name)" 
+            :color="pokemon.color"
             :types="majFirstLetterTab(pokemon.types)"
             :imageUrl="pokemon.imageUrl"          
             :key="pokemon.urlIndex"
@@ -21,37 +22,58 @@ export default {
         PokemonCard
     },
     data(){
-        return {  
-            colors: [],          
-            pokemons:[]            
+        return { 
+            pokemons:[]                     
         }        
     },
-    created(){
-        //Récupération de la liste de couleurs :
-
+    created(){ 
+        //Nombre de pokemons affichés :
+        let limit = 151;
+        //Fabrication du tableau d'objets Pokemons :
+        for(let i = 0 ; i < limit ; i++){	
+            this.pokemons.push({
+                index: i + 1,
+                name: '',
+                imageUrl: 'https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other/official-artwork/' + (i + 1) + '.png?raw=true',
+                color: '',
+                types: []
+            })
+        }
+        //Récupération du nom de chaque pokemon :
         fetch('https://pokeapi.co/api/v2/pokemon?limit=151')
         .then(response => response.json())
         .then(response => {	
-            for(let i = 0 ; i < response.results.length ; i++){
-                let types = [];		  				
-                fetch('https://pokeapi.co/api/v2/pokemon/' + (i + 1))
-                .then(response => response.json())
-                .then(response => {	
-                    for (let j = 0 ; j < response.types.length ; j++){
-                        types.push(response.types[j].type.name);                        
-                    }				  				
-                })
-                .catch(error => console.error(error));	  			
-                
-                this.pokemons.push({
-                    index: (i + 1).toString(),
-                    name: response.results[i].name,
-                    imageUrl: 'https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other/official-artwork/' + (i + 1) + '.png?raw=true',
-                    types: types
-                });
-            }               
-        })
+            for(let i = 0 ; i < limit ; i++){
+                this.pokemons[i].name = response.results[i].name;
+            }
+        })   
         .catch(error => console.error(error));
+        //Récupération de la couleur de chaque pokemon :
+        for(let i = 0 ; i < limit ; i++){
+            fetch('https://pokeapi.co/api/v2/pokemon-species/' + (i + 1))
+                .then(response => response.json())
+                .then(response => {
+                    this.pokemons[i].color = response.color.name; 
+                })
+                .catch(error => console.error(error));
+        }
+        //Récupération des types de chaque pokemon (ex: grass, fire, etc...):
+        for(let i = 0 ; i < limit ; i++){            
+            let types = [];	
+            fetch('https://pokeapi.co/api/v2/pokemon/' + (i + 1))
+            .then(response => response.json())
+            .then(response => {	
+                for (let j = 0 ; j < response.types.length ; j++){
+                    types.push(response.types[j].type.name);
+                }                    				  				
+            })
+            .catch(error => console.error(error));
+            this.pokemons[i].types = types; 
+        }
+        //affichage des couleurs :
+        for(let i = 0 ; i < limit ; i++){
+            console.log('Log : ' + this.pokemons[0].color);
+        }
     },
     methods: {
         majFirstLetter(str) {

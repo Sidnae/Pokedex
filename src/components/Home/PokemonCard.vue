@@ -1,7 +1,7 @@
 <script>
 export default {
     name: 'PokemonCard',
-    props: ['urlIndex','index','name','imageUrl','types']
+    props: ['urlIndex','index','name','imageUrl','types','color']
 }
 // urlIndex : sans les zéros devant ; index : avec les zéros devant
 </script>
@@ -14,6 +14,7 @@ export default {
             <div class='pokemonTypeWrapper'><p v-for='type in types' :key="type" class='pokemonType'>{{ type }}</p></div>
             <img :src="imageUrl" alt="Pokemon" class='pokemonImg'>            
         </div>
+        <p>{{ color }}</p>
     </div>
 </template>
 

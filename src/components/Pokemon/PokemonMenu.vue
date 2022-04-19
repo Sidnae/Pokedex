@@ -1,10 +1,10 @@
 <script>
 export default {
     name: 'PokemonMenu',    
-    props: ['activeMenuEl'],
+    props: ['activeMenu'],
     methods: {
-        selectedMenu(event){
-            this.$emit('selectedMenu', event.target.id)
+        selectMenu(event){
+            this.$emit('selectMenu', event)
         }
     }  
 }
@@ -12,17 +12,10 @@ export default {
 
 <template>
     <div class='menuWrapper'>
-        <p v-if="activeMenuEl == 'about'"><span class='activeMenuEl' id='about'>About</span></p>
-        <p v-else><span class='inactiveMenuEl' id='about'>About</span></p>
-
-        <p v-if="activeMenuEl == 'stats'" ><span class='activeMenuEl' id='stats'>Stats</span></p>        
-        <p v-else><span class='inactiveMenuEl' id='stats' @click="$emit('selectedMenu', $event.target.id)">Stats</span></p>
-
-        <p v-if="activeMenuEl == 'evol'"><span class='activeMenuEl' id='evol'>Evolution</span></p>
-        <p v-else><span class='inactiveMenuEl' id='evol'>Evolution</span></p>
-
-        <p v-if="activeMenuEl == 'moves'"><span class='activeMenuEl' id='moves'>Moves</span></p>
-        <p v-else><span class='inactiveMenuEl' id='moves'>Moves</span></p>     
+        <p class='activeMenu' id='about' @click='selectMenu'>About</p> 
+        <p class='inactiveMenu' id='stats' @click='selectMenu'>Stats</p>
+        <p class='inactiveMenu' id='evol' @click='selectMenu'>Evolution</p>
+        <p class='inactiveMenu' id='moves' @click='selectMenu'>Moves</p>
     </div>
 </template>
 
@@ -33,13 +26,13 @@ export default {
         justify-content: space-between;
         background-color: white;        
     }
-    .activeMenuEl {
+    .activeMenu {
         text-decoration-line:underline; 
         text-decoration-color: rgb(95, 58, 244);
         text-underline-offset: 1rem; 
         text-decoration-thickness: 0.15rem;  
     }
-    .inactiveMenuEl {
+    .inactiveMenu {
         color: gray;
     }
     @media screen and (orientation:portrait) {    
@@ -64,7 +57,7 @@ export default {
         padding-left: 1vw;
         padding-right: 1vw;
     }
-    .activeMenuEl {           
+    .activeMenu {           
         text-underline-offset: 1rem;        
     }
     }

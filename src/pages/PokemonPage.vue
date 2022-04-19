@@ -1,27 +1,41 @@
 <template>
   <div class='wrapper'>
     <PokemonBanner
-      :name="name" 
-      :index="index"  
-      :imageUrl="imageUrl" 
-      :types="types"              
-      :key="index"
+      :name='name'
+      :index='index' 
+      :imageUrl='imageUrl' 
+      :types='types'              
+      :key='index'
     />
     <PokemonMenu
-      :activeMenuEl="activeMenuEl"
-      @selectedMenu="selectedMenu" 
-    />    
+      :activeMenu='activeMenu'
+      @selectMenu='selectMenu'
+    /> 
+    <div id='main'>
+      <PokemonAbout v-if='activeMenu == "about"' />
+      <PokemonStats v-if='activeMenu == "stats"' />
+      <PokemonEvol v-if='activeMenu == "evol"' />
+      <PokemonMoves v-if='activeMenu == "moves"' />
+    </div>
   </div>
 </template>
 
 <script>
 import PokemonBanner from '../components/Pokemon/PokemonBanner.vue'
 import PokemonMenu from '../components/Pokemon/PokemonMenu.vue'
+import PokemonAbout from '../components/Pokemon/PokemonAbout.vue'
+import PokemonStats from '../components/Pokemon/PokemonStats.vue'
+import PokemonEvol from '../components/Pokemon/PokemonEvol.vue'
+import PokemonMoves from '../components/Pokemon/PokemonMoves.vue'
 export default {
     name: 'PokemonPage',
     components: {
         PokemonBanner,
         PokemonMenu,
+        PokemonAbout,
+        PokemonStats,
+        PokemonEvol,
+        PokemonMoves
     },
     data(){
         return { 
@@ -29,10 +43,10 @@ export default {
           name: '',
           imageUrl: '',
           types: [],
-          activeMenuEl: 'About'          
+          activeMenu: 'about'          
         }        
     },
-    created(){      
+    created(){           
       this.urlIndex = this.$route.params.urlIndex;            				
       fetch('https://pokeapi.co/api/v2/pokemon/' + this.$route.params.urlIndex)
       .then(response => response.json())
@@ -56,8 +70,15 @@ export default {
         }
         return index;
       },            
-      selectedMenu(event){
-          console.log(event);
+      selectMenu(event){ 
+        let menuStr = event.target.id;
+        let menuEl = document.getElementById(menuStr);        
+        if(menuStr != this.activeMenu){
+          //désactiver tout autre menu actif puis activer le menu cliqué :
+          document.getElementsByClassName('activeMenu')[0].className = 'inactiveMenu';          
+          menuEl.className = 'activeMenu';
+        }  
+        this.activeMenu = menuStr;
       }    
     },
     computed: {
@@ -69,5 +90,14 @@ export default {
 </script>
 
 <style scoped>
- 
+@media screen and (orientation:portrait) {
+  #main {
+    padding: 2vw;
+  }
+}
+@media screen and (orientation:landscape) {
+  #main {
+    padding: 1vw;
+  }
+} 
 </style>

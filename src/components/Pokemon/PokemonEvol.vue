@@ -1,9 +1,9 @@
 <script>
 export default {
-    name: 'PokemonAbout'    
+    name: 'PokemonEvol'    
 }
 </script>
 
 <template>
-    <p>Coucou !</p>    
+    <p>Ca va ?</p>    
 </template>
