@@ -1,15 +1,27 @@
 <script>
 export default {
     name: 'PokemonCard',
-    props: ['urlIndex','index','name','imageUrl','types','color']
+    props: ['index','name','imageUrl','types','color','isLoading']  
+    /* props: {
+        urlIndex: String,
+        index: Number,
+        name: String,
+        imageUrl: String,
+        types: Array,
+        color: String,
+        isLoading: {
+            type: Boolean,
+            defautl: true
+        } 
+    } */ 
 }
 // urlIndex : sans les zéros devant ; index : avec les zéros devant
 </script>
 
-<template>
+<template v-if='isLoading == false'>
     <div :class='color'>
         <p class='index'>#{{ index }}</p>
-        <h2><router-link :to="`/pokemons/${urlIndex}`">{{ name }}</router-link></h2>
+        <h2><router-link :to="`/pokemons/${index}`">{{ name }}</router-link></h2>
         <div class='pokemonContentWrapper'>
             <div class='pokemonTypeWrapper'><p v-for='type in types' :key="type" class='pokemonType'>{{ type }}</p></div>
             <img :src="imageUrl" alt="Pokemon" class='pokemonImg'>            

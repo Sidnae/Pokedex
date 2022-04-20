@@ -1,15 +1,16 @@
 <template>      
     <div class="wrapper">
-        <h1 id='title'>Pokedex</h1>        
-        <PokemonCard v-for="pokemon in pokemons" class="pokemonItem"
-            :urlIndex="pokemon.index"
+        <h1 id='title'>Pokedex</h1>
+        <p v-if='isLoading'>Chargement...</p>             
+        <PokemonCard v-for="pokemon in pokemons" class="pokemonItem"            
             :index="formatIndex(pokemon.index)"
             :name="majFirstLetter(pokemon.name)" 
             :color="pokemon.color"
             :types="majFirstLetterTab(pokemon.types)"
-            :imageUrl="pokemon.imageUrl"          
-            :key="pokemon.urlIndex"
-        />              
+            :imageUrl="pokemon.imageUrl"
+            :isLoading="isLoading"         
+            :key="pokemon.index"
+        />                           
     </div>
 </template>
 
@@ -23,16 +24,20 @@ export default {
     },
     data(){
         return { 
-            pokemons:[]                     
+            isLoading: true,           
+            pokemons:[],
+            fetch1: false,
+            fetch2: [],
+            fetch3: false    
         }        
-    },
-    created(){ 
+    },    
+    created(){        
         //Nombre de pokemons affichés :
         let limit = 151;
         //Fabrication du tableau d'objets Pokemons :
         for(let i = 0 ; i < limit ; i++){	
             this.pokemons.push({
-                index: i + 1,
+                index: (i + 1).toString(),
                 name: '',
                 imageUrl: 'https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other/official-artwork/' + (i + 1) + '.png?raw=true',
                 color: '',
@@ -46,7 +51,9 @@ export default {
             for(let i = 0 ; i < limit ; i++){
                 this.pokemons[i].name = response.results[i].name;
             }
-        })   
+        })
+        .then(this.fetch1 = true) 
+        .then(console.log('fetch1 done'))
         .catch(error => console.error(error));
         //Récupération de la couleur de chaque pokemon :
         for(let i = 0 ; i < limit ; i++){
@@ -55,26 +62,37 @@ export default {
                 .then(response => {
                     this.pokemons[i].color = response.color.name; 
                 })
+                .then(this.fetch2[i] = true)
+                .then(console.log('fetch2[' + i + '] done'))
                 .catch(error => console.error(error));
         }
         //Récupération des types de chaque pokemon (ex: grass, fire, etc...):
-        for(let i = 0 ; i < limit ; i++){            
+        for(let i = 0 ; i < limit ; i++){  
             let types = [];	
             fetch('https://pokeapi.co/api/v2/pokemon/' + (i + 1))
             .then(response => response.json())
             .then(response => {	
+                console.log(i)
                 for (let j = 0 ; j < response.types.length ; j++){
                     types.push(response.types[j].type.name);
                 }                    				  				
             })
+            .then(this.isLoading = false) 
+            .then(console.log('fetch3 done'))
             .catch(error => console.error(error));
             this.pokemons[i].types = types; 
-        }
-        //affichage des couleurs :
-        for(let i = 0 ; i < limit ; i++){
-            console.log('Log : ' + this.pokemons[0].color);
-        }
+        }        
     },
+    computed: {
+        /* isLoading(){
+            if(this.fetch1 == true && this.fetch2.every == true && this.fetch3 == true){
+                return false;
+            }else {
+                return true;
+            }
+            
+        } */
+    },      
     methods: {
         majFirstLetter(str) {
             return str.charAt(0).toUpperCase() + str.slice(1);
@@ -84,7 +102,7 @@ export default {
             return tab;
         },
         formatIndex(index){
-            while(index.toString().length < 3){
+            while(index.length < 3){
                 index = '0' + index;
             }                       
             return index;

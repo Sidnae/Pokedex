@@ -15,7 +15,7 @@ export default new Router({
       component: HomePage
     },
     {
-      path: "/pokemons/:urlIndex",
+      path: "/pokemons/:index",
       name: "PokemonPage",
       component: PokemonPage
     }
