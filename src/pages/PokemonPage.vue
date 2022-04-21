@@ -52,18 +52,18 @@ export default {
       //récupération de l'url à afficher :         
       this.index = this.$route.params.index; 
       //Récupération des données Pokemon : nom et types           				
-      fetch('https://pokeapi.co/api/v2/pokemon/' + this.unformatIndex(this.index))
+      fetch('https://pokeapi.co/api/v2/pokemon/' + this.index)
       .then(response => response.json())
       .then(response => {	
-        this.name = this.majFirstLetter(response.forms[0].name);
+        this.name = response.forms[0].name;
         for (let i = 0 ; i < response.types.length ; i++){
-            this.types.push(this.majFirstLetter(response.types[i].type.name));            
+            this.types.push(response.types[i].type.name);            
         }	
-        this.imageUrl = 'https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other/official-artwork/' + this.unformatIndex(this.index) + '.png?raw=true';
+        this.imageUrl = 'https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other/official-artwork/' + this.index + '.png?raw=true';
       })
       .catch(error => console.error(error));
       //Récupération de la couleur :
-      fetch('https://pokeapi.co/api/v2/pokemon-species/' + this.unformatIndex(this.index))
+      fetch('https://pokeapi.co/api/v2/pokemon-species/' + this.index)
         .then(response => response.json())
         .then(response => {
             this.color = response.color.name; 
@@ -74,10 +74,7 @@ export default {
       this.activeLink = 'about';      
     },
     
-    methods: {      
-      majFirstLetter(str) {
-        return str.charAt(0).toUpperCase() + str.slice(1);
-      },                  
+    methods: {          
       selectMenu(event){ 
         let menuStr = event.target.id;
         let menuEl = document.getElementById(menuStr);        
@@ -87,14 +84,7 @@ export default {
           menuEl.className = 'activeMenu';
         }  
         this.activeMenu = menuStr;
-      },
-      unformatIndex(index){  
-        let unformattedIndex = index;
-        while(unformattedIndex.slice(0, 1) == 0){
-          unformattedIndex = unformattedIndex.slice(1);
-        }
-        return unformattedIndex;
-      }  
+      }
     }
 }
 </script>

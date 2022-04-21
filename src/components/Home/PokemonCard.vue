@@ -1,7 +1,6 @@
 <script>
 export default {
-    name: 'PokemonCard',
-    //props: ['index','name','imageUrl','types','color','isLoading']  
+    name: 'PokemonCard',     
     props: {        
         index: String,
         name: String,
@@ -12,17 +11,27 @@ export default {
             type: Boolean,
             default: false
         } 
+    },
+    methods: {
+        majFirstLetter(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        },
+        formatIndex(index){
+            while(index.length < 3){
+                index = '0' + index;
+            }                       
+            return index;
+        }
     }
 }
-// urlIndex : sans les zéros devant ; index : avec les zéros devant
 </script>
 
 <template>
     <div  v-if='isLoading == false' :class='color'>
-        <p class='index'>#{{ index }}</p>
-        <h2><router-link :to="`/pokemons/${index}`">{{ name }}</router-link></h2>
+        <p class='index'>#{{ formatIndex(index) }}</p>
+        <h2><router-link :to="`/pokemons/${index}`">{{ majFirstLetter(name) }}</router-link></h2>
         <div class='pokemonContentWrapper'>
-            <div class='pokemonTypeWrapper'><p v-for='type in types' :key="type" class='pokemonType'>{{ type }}</p></div>
+            <div class='pokemonTypeWrapper'><p v-for='type in types' :key="type" class='pokemonType'>{{ majFirstLetter(type) }}</p></div>
             <img :src="imageUrl" alt="Pokemon" class='pokemonImg'>            
         </div>        
     </div>

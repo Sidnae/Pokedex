@@ -1,7 +1,18 @@
 <script>
 export default {
     name: 'PokemonBanner',
-    props: ['index','name','imageUrl','types','color']
+    props: ['index','name','imageUrl','types','color'],
+    methods: {
+        majFirstLetter(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+      },
+      formatIndex(index){
+            while(index.length < 3){
+                index = '0' + index;
+            }                       
+            return index;
+        }
+    }
 }
 </script>
 
@@ -9,7 +20,7 @@ export default {
     <div id='bannerWrapper' :class='color'>
         <header id='bannerHeader'>
             <p class='arrowWrapper'><router-link :to='`/`'><span class="material-icons">arrow_back</span></router-link></p>
-            <h1>{{ name }}</h1><p class='pokemonIndex'>#{{ index }}</p>       
+            <h1>{{ majFirstLetter(name) }}</h1><p class='pokemonIndex'>#{{ formatIndex(index) }}</p>       
             <div class='typesWrapper'>
                 <p v-for='type in types' :key="type" class='pokemonType'>{{ type }}</p>                
             </div>

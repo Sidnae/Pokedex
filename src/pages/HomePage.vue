@@ -3,10 +3,10 @@
         <h1 id='title'>Pokedex</h1>
         <p v-if='isLoading'>Chargement...</p>             
         <PokemonCard v-for="pokemon in pokemons" class="pokemonItem"            
-            :index="formatIndex(pokemon.index)"
-            :name="majFirstLetter(pokemon.name)" 
+            :index="pokemon.index"
+            :name="pokemon.name" 
             :color="pokemon.color"
-            :types="majFirstLetterTab(pokemon.types)"
+            :types="pokemon.types"
             :imageUrl="pokemon.imageUrl"
             :isLoading="isLoading"         
             :key="pokemon.index"
@@ -16,7 +16,6 @@
 
 <script>
 import PokemonCard from '../components/Home/PokemonCard.vue'
-
 export default {
     name: 'HomePage',
     components: {
@@ -28,79 +27,54 @@ export default {
             pokemons:[]   
         }        
     },    
-    created: async function(){        
-        
-            //Nombre de pokemons affichés :
-            let limit = 151;
-            //Fabrication du tableau d'objets Pokemons :
-            for(let i = 0 ; i < limit ; i++){	
+    created: async function(){              
+        //Récupération index, nom, imageUrl de chaque pokemon :
+        await fetch('https://pokeapi.co/api/v2/pokemon?limit=151')
+        .then(response => response.json())        
+        .then(response => { 
+            response.results.forEach( (r) => {
                 this.pokemons.push({
-                    index: (i + 1).toString(),
-                    name: '',
-                    imageUrl: 'https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other/official-artwork/' + (i + 1) + '.png?raw=true',
+                    index: this.extractIndex(r.url),
+                    name: r.name,
+                    imageUrl: this.generateImageUrl(this.extractIndex(r.url)),
                     color: '',
                     types: []
-                })
-            }
-            //Récupération du nom de chaque pokemon :
-            let response = await (this.fetchNames());            
-            let responseJson = response.json();
-            for(let i = 0 ; i < limit ; i++){
-                    this.pokemons[i].name = responseJson.results[i].name;
-                }
-
-           /*  .then(response => response.json())
-            .then(response => {	
-                for(let i = 0 ; i < limit ; i++){
-                    this.pokemons[i].name = response.results[i].name;
-                }
-            })   
-            .catch(error => console.error(error));   */
-            
- 
-            
-            //Récupération de la couleur de chaque pokemon :
-            for(let i = 0 ; i < limit ; i++){
-                await fetch('https://pokeapi.co/api/v2/pokemon-species/' + (i + 1))
-                    .then(response => response.json())
-                    .then(response => {
-                        this.pokemons[i].color = response.color.name; 
-                    })
-                    .catch(error => console.error(error));
-            }
-            //Récupération des types de chaque pokemon (ex: grass, fire, etc...):
-            for(let i = 0 ; i < limit ; i++){  
-                let types = [];	
-                await fetch('https://pokeapi.co/api/v2/pokemon/' + (i + 1))
-                .then(response => response.json())
-                .then(response => {	                    
-                    for (let j = 0 ; j < response.types.length ; j++){
-                        types.push(response.types[j].type.name);
-                    }                    				  				
                 }) 
+            });         
+        })  
+        .catch(error => console.error(error));        
+        for(let p of this.pokemons) {
+            await fetch('https://pokeapi.co/api/v2/pokemon-species/' + p.index)
+                .then(response => response.json())
+                .then(response => {
+                    p.color = response.color.name; 
+                })
                 .catch(error => console.error(error));
-                this.pokemons[i].types = types; 
-            }
-        
+        }
+        //Récupération des types de chaque pokemon (ex: grass, fire, etc...):        
+        for(let p of this.pokemons) {
+            let types = [];	
+            await fetch('https://pokeapi.co/api/v2/pokemon/' + p.index)
+            .then(response => response.json())
+            .then(response => {	
+                response.types.forEach( (t) => {
+                    types.push(t.type.name);
+                })                 				  				
+            }) 
+            .catch(error => console.error(error));
+            p.types = types; 
+        }        
+        //Passage de isLoading à false pour afficher le contenu et masquer le message d'attente :
         this.isLoading = false;    
     },        
     methods: {
-        majFirstLetter(str) {
-            return str.charAt(0).toUpperCase() + str.slice(1);
-        },
-        majFirstLetterTab(tab) {
-            tab = tab.map(element => element.charAt(0).toUpperCase() + element.slice(1)); 
-            return tab;
-        },
-        formatIndex(index){
-            while(index.length < 3){
-                index = '0' + index;
-            }                       
-            return index;
-        },
-        fetchNames(){
-            fetch('https://pokeapi.co/api/v2/pokemon?limit=151');
-            return response;
+        extractIndex(url){
+			url = url.slice(34).slice(0,-1);
+			return url;
+		},
+        generateImageUrl(index){
+            let imageUrl = 'https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other/official-artwork/' + index + '.png?raw=true';
+            return imageUrl;
         }
     }   
 }
