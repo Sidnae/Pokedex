@@ -1,7 +1,7 @@
 <template>      
     <div class="wrapper">
         <h1 id='title'>Pokedex</h1>
-        <p v-if='isLoading'>Chargement...</p>             
+        <p v-if='isLoading'>Chargement des pokemons...</p>             
         <PokemonCard v-for="pokemon in pokemons" class="pokemonItem"            
             :index="pokemon.index"
             :name="pokemon.name" 
@@ -28,42 +28,46 @@ export default {
         }        
     },    
     created: async function(){              
-        //Récupération index, nom, imageUrl de chaque pokemon :
-        await fetch('https://pokeapi.co/api/v2/pokemon?limit=151')
-        .then(response => response.json())        
-        .then(response => { 
-            response.results.forEach( (r) => {
-                this.pokemons.push({
-                    index: this.extractIndex(r.url),
-                    name: r.name,
-                    imageUrl: this.generateImageUrl(this.extractIndex(r.url)),
-                    color: '',
-                    types: []
-                }) 
-            });         
-        })  
-        .catch(error => console.error(error));        
-        for(let p of this.pokemons) {
-            await fetch('https://pokeapi.co/api/v2/pokemon-species/' + p.index)
-                .then(response => response.json())
-                .then(response => {
-                    p.color = response.color.name; 
-                })
-                .catch(error => console.error(error));
-        }
-        //Récupération des types de chaque pokemon (ex: grass, fire, etc...):        
-        for(let p of this.pokemons) {
-            let types = [];	
-            await fetch('https://pokeapi.co/api/v2/pokemon/' + p.index)
-            .then(response => response.json())
-            .then(response => {	
-                response.types.forEach( (t) => {
-                    types.push(t.type.name);
-                })                 				  				
+        //Récupération index, nom, imageUrl de chaque pokemon :        
+        try {
+            let res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151');
+            let resJson = await res.json(); 
+            resJson.results.forEach( (r) => {
+            this.pokemons.push({
+                index: this.extractIndex(r.url),
+                name: r.name,
+                imageUrl: this.generateImageUrl(this.extractIndex(r.url)),
+                color: '',
+                types: []
             }) 
-            .catch(error => console.error(error));
-            p.types = types; 
+        }); 
+        } catch (error) {
+            console.error(error);
         }        
+        //Récupération des couleurs :
+        for(let p of this.pokemons) {
+            try {
+                let res = await fetch('https://pokeapi.co/api/v2/pokemon-species/' + p.index);
+                let resJson = await res.json(); 
+                p.color = resJson.color.name; 
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        //Récupération des types de chaque pokemon (ex: grass, fire, etc...):  
+        for(let p of this.pokemons) {
+            try {
+                let types = [];	
+                let res = await fetch('https://pokeapi.co/api/v2/pokemon/' + p.index);
+                let resJson = await res.json();
+                resJson.types.forEach( (t) => {
+                    types.push(t.type.name);
+                }) 
+                p.types = types; 
+            } catch (error) {
+                console.error(error);
+            }   
+        }
         //Passage de isLoading à false pour afficher le contenu et masquer le message d'attente :
         this.isLoading = false;    
     },        
