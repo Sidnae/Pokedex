@@ -1,21 +1,23 @@
 <template>      
     <div class="wrapper">
-        <h1 id='title'>Pokedex</h1>
+        <!-- <h1 id='title' @click="updateTitle(' !!')"><span>{{ title }}</span></h1> -->
+        <h1 id='title' @click="updatePokemons()"><span>{{ title }}</span></h1>
         <p v-if='isLoading'>Chargement des pokemons...</p>             
         <PokemonCard v-for="pokemon in pokemons" class="pokemonItem"            
-            :index="pokemon.index"
+            :id="pokemon.id"
             :name="pokemon.name" 
             :color="pokemon.color"
             :types="pokemon.types"
             :imageUrl="pokemon.imageUrl"
             :isLoading="isLoading"         
-            :key="pokemon.index"
+            :key="pokemon.id"
         />                           
     </div>
 </template>
 
 <script>
 import PokemonCard from '../components/Home/PokemonCard.vue'
+import { mapState, mapActions } from 'vuex'
 export default {
     name: 'HomePage',
     components: {
@@ -23,64 +25,26 @@ export default {
     },
     data(){
         return { 
-            isLoading: true,           
-            pokemons:[]   
+            
         }        
     },    
-    created: async function(){              
-        //Récupération index, nom, imageUrl de chaque pokemon :        
-        try {
-            let res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151');
-            let resJson = await res.json(); 
-            resJson.results.forEach( (r) => {
-            this.pokemons.push({
-                index: this.extractIndex(r.url),
-                name: r.name,
-                imageUrl: this.generateImageUrl(this.extractIndex(r.url)),
-                color: '',
-                types: []
-            }) 
-        }); 
-        } catch (error) {
-            console.error(error);
-        }        
-        //Récupération des couleurs :
-        for(let p of this.pokemons) {
-            try {
-                let res = await fetch('https://pokeapi.co/api/v2/pokemon-species/' + p.index);
-                let resJson = await res.json(); 
-                p.color = resJson.color.name; 
-            } catch (error) {
-                console.error(error);
-            }
-        }
-        //Récupération des types de chaque pokemon (ex: grass, fire, etc...):  
-        for(let p of this.pokemons) {
-            try {
-                let types = [];	
-                let res = await fetch('https://pokeapi.co/api/v2/pokemon/' + p.index);
-                let resJson = await res.json();
-                resJson.types.forEach( (t) => {
-                    types.push(t.type.name);
-                }) 
-                p.types = types; 
-            } catch (error) {
-                console.error(error);
-            }   
-        }
-        //Passage de isLoading à false pour afficher le contenu et masquer le message d'attente :
-        this.isLoading = false;    
+    created: async function(){         
+        await this.updatePokemons();            
     },        
     methods: {
-        extractIndex(url){
+        extractid(url){
 			url = url.slice(34).slice(0,-1);
 			return url;
 		},
-        generateImageUrl(index){
-            let imageUrl = 'https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other/official-artwork/' + index + '.png?raw=true';
+        generateImageUrl(id){
+            let imageUrl = 'https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other/official-artwork/' + id + '.png?raw=true';
             return imageUrl;
-        }
-    }   
+        },
+        ...mapActions(['updateTitle','updatePokemons'])
+    },
+    computed: {
+        ...mapState(['title','pokemons','isLoading'])
+    }  
 }
 </script>
 

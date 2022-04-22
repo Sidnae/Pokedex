@@ -2,7 +2,7 @@
 export default {
     name: 'PokemonCard',     
     props: {        
-        index: String,
+        id: String,
         name: String,
         imageUrl: String,
         types: Array,
@@ -16,11 +16,11 @@ export default {
         majFirstLetter(str) {
             return str.charAt(0).toUpperCase() + str.slice(1);
         },
-        formatIndex(index){
-            while(index.length < 3){
-                index = '0' + index;
+        formatid(id){
+            while(id.length < 3){
+                id = '0' + id;
             }                       
-            return index;
+            return id;
         }
     }
 }
@@ -28,8 +28,8 @@ export default {
 
 <template>
     <div  v-if='isLoading == false' :class='color'>
-        <p class='index'>#{{ formatIndex(index) }}</p>
-        <h2><router-link :to="`/pokemons/${index}`">{{ majFirstLetter(name) }}</router-link></h2>
+        <p class='id'>#{{ formatid(id) }}</p>
+        <h2><router-link :to="`/pokemons/${id}`">{{ majFirstLetter(name) }}</router-link></h2>
         <div class='pokemonContentWrapper'>
             <div class='pokemonTypeWrapper'><p v-for='type in types' :key="type" class='pokemonType'>{{ majFirstLetter(type) }}</p></div>
             <img :src="imageUrl" alt="Pokemon" class='pokemonImg'>            
@@ -41,7 +41,7 @@ export default {
 a {   
     color: white;
 }
-.index {
+.id {
     width: 100%; 
     text-align: right;
     color: rgba(0, 0, 0, 0.1);
@@ -58,7 +58,7 @@ a {
     margin-top: 1.5vw;
 }
 @media screen and (orientation:portrait) {
-.index {
+.id {
     font-size: 1.5rem;
 }
 .pokemonType:last-child {
@@ -69,7 +69,7 @@ a {
     }
 }
 @media screen and (orientation:landscape) {
-.index {
+.id {
     font-size:1.7rem;
     border-radius: 1.5rem; 
 }
