@@ -5,9 +5,11 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    title: 'Pokedex',
+    title: 'The Pokedex',
     pokemons: [],
-    isLoading: true  
+    isLoading: [true],
+    currentPokemon: {},
+    currentPart:1  
   },
   mutations: {
     MUTE_TITLE(state, payload){
@@ -17,58 +19,104 @@ export default new Vuex.Store({
         state.title = 'Pokedex';
       }      
     } ,
-    FEED_POKEMONS: async function(state){
+    UPDATE_CURRENT_POKEMON(state, payload){
+      state.currentPokemon = state.pokemons[parseInt(payload, 10) - 1]      
+    },
+    INCREMENT_CURRENT_PART(state){
+      state.currentPart++;      
+    },
+    LIST_POKEMONS: async function(state){
       //Récupération id, nom, imageUrl de chaque pokemon :        
       try {
-        let res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151');
+        let res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=' + 898);
         let resJson = await res.json(); 
         resJson.results.forEach( (r) => {
-          let id = r.url.slice(34).slice(0,-1);
-          let imageUrl = 'https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other/official-artwork/' + id + '.png?raw=true';
+          let id = r.url.slice(34).slice(0,-1);          
           state.pokemons.push({
             id: id,
-            name: r.name,
-            imageUrl: imageUrl,
+            name: r.name,            
             color: '',
-            types: []
-        }) 
-    }); 
-    } catch (error) {
-        console.error(error);
-    }        
-    //Récupération des couleurs :
-    for(let p of state.pokemons) {
+            types: [],
+            description: '',
+            egg_groups: [],
+            abilities: []
+          }) 
+      }); 
+      } catch (error) {
+          console.error(error);
+      }
+    },
+    COMPLETE_POKEMONS: async function(state) {      
+    //Retrieve colors, description, egg_groups :
+    for(let i = state.currentPart - 1; i < state.currentPart * 100 ; i++) {
         try {
-            let res = await fetch('https://pokeapi.co/api/v2/pokemon-species/' + p.id);
+            let res = await fetch('https://pokeapi.co/api/v2/pokemon-species/' + (i + 1));
             let resJson = await res.json(); 
-            p.color = resJson.color.name; 
+            state.pokemons[i].color = resJson.color.name; 
+            //find position of english description :
+            let flavorTextIndex = resJson.flavor_text_entries.map(element => {return element.language.name}).indexOf('en');             
+            let description = resJson.flavor_text_entries[flavorTextIndex].flavor_text;             
+            description = description.replace("\n"," ");
+            description = description.replace("\f"," ");
+            description = description.replace("POKéMON","Pokemon");
+            state.pokemons[i].description = description; 
+            let egg_groups = []           ;
+            resJson.egg_groups.forEach( (e) => {
+              egg_groups.push(e.name);
+            }) 
+            state.pokemons[i].egg_groups = egg_groups;            
         } catch (error) {
             console.error(error);
         }
     }
-    //Récupération des types de chaque pokemon (ex: grass, fire, etc...):  
-    for(let p of state.pokemons) {
-        try {
-            let types = [];	
-            let res = await fetch('https://pokeapi.co/api/v2/pokemon/' + p.id);
+    //Retrieve types, height, weight, abilities :  
+    for(let i = state.currentPart - 1; i < state.currentPart * 100 ; i++) {
+        try {            
+            let res = await fetch('https://pokeapi.co/api/v2/pokemon/' + (i + 1));
             let resJson = await res.json();
+            //types :
+            let types = [];	
             resJson.types.forEach( (t) => {
                 types.push(t.type.name);
             }) 
-            p.types = types; 
+            state.pokemons[i].types = types;
+            //abitilites :
+            let abilities = [];	
+            resJson.abilities.forEach( (a) => {
+                abilities.push(a.ability.name);
+            }) 
+            state.pokemons[i].abilities = abilities;
+            //height, weight :
+            state.pokemons[i].height = resJson.height;
+            state.pokemons[i].weight = resJson.weight;
         } catch (error) {
             console.error(error);
         }   
       }
-      state.isLoading = false;      
-    }
+      state.isLoading[state.currentPart - 1] = false;      
+    },
+    INCREMENT_ISLOADING(){
+      this.state.isLoading.push(true);
+    }    
   },
   actions: {
     updateTitle(context, payload){
       context.commit('MUTE_TITLE',payload);
     } ,
-    updatePokemons(context){
-      context.commit('FEED_POKEMONS');
+    listPokemons(context){
+      context.commit('LIST_POKEMONS');
+    },
+    completePokemons(context){
+      context.commit('COMPLETE_POKEMONS');
+    },
+    updateCurrentPokemon(context,payload){
+      context.commit('UPDATE_CURRENT_POKEMON',payload);
+    },
+    incrementCurrentPart(context,payload){
+      context.commit('INCREMENT_CURRENT_PART',payload);
+    },
+    incrementIsLoading(context){
+      context.commit('INCREMENT_ISLOADING');
     }
   }
 });

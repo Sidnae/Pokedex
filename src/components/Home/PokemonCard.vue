@@ -27,12 +27,12 @@ export default {
 </script>
 
 <template>
-    <div  v-if='isLoading == false' :class='color'>
+    <div  v-if='isLoading == false' :class='color' id="id">
         <p class='id'>#{{ formatid(id) }}</p>
         <h2><router-link :to="`/pokemons/${id}`">{{ majFirstLetter(name) }}</router-link></h2>
         <div class='pokemonContentWrapper'>
-            <div class='pokemonTypeWrapper'><p v-for='type in types' :key="type" class='pokemonType'>{{ majFirstLetter(type) }}</p></div>
-            <img :src="imageUrl" alt="Pokemon" class='pokemonImg'>            
+            <div class='pokemonTypeWrapper'><p v-for='type in types' :key='type' class='pokemonType'>{{ majFirstLetter(type) }}</p></div>
+            <img :src="`https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other/official-artwork/${id}.png?raw=true`" :alt="`${name} photo`" class='pokemonImg' loading='lazy'>            
         </div>        
     </div>
 </template>

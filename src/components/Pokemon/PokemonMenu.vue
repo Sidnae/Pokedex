@@ -20,20 +20,28 @@ export default {
 </template>
 
 <style scoped>
+    .menu {
+        font-weight: bold;
+    }
     .menuWrapper {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        background-color: white;        
+        background-color: white; 
+        margin-bottom: 1rem; 
+        padding-left: 1rem;
+        padding-right: 1rem;      
     }
     .activeMenu {
         text-decoration-line:underline; 
-        text-decoration-color: rgb(95, 58, 244);
+        text-decoration-color: black;
         text-underline-offset: 1rem; 
-        text-decoration-thickness: 0.15rem;  
+        text-decoration-thickness: 0.15rem; 
+        font-weight: bold; 
     }
     .inactiveMenu {
         color: gray;
+        font-weight: bold;
     }
     @media screen and (orientation:portrait) {    
     .menuWrapper {        

@@ -5,7 +5,7 @@
       :index='index' 
       :imageUrl='imageUrl' 
       :types='types'
-      :color='color'             
+      :color='color'                 
       :key='index'
     />
     <PokemonMenu
@@ -13,12 +13,29 @@
       @selectMenu='selectMenu'
     /> 
     <div id='main'>
-      <PokemonAbout v-if='activeMenu == "about"' />
-      <PokemonStats v-if='activeMenu == "stats"' />
-      <PokemonEvol v-if='activeMenu == "evol"' />
-      <PokemonMoves v-if='activeMenu == "moves"' />      
-    </div>
-  </div>
+      
+      <PokemonAbout  
+      v-if='activeMenu == "about"'
+      :description='description'
+      :number='index'
+      :height='height'
+      :weight='weight' 
+      :egg_groups='egg_groups'
+      :color='color'
+      :types='types'
+      :abilities='abilities'
+      />
+      <PokemonStats v-if='activeMenu == "stats"'
+      :name='name'
+       />
+      <PokemonEvol v-if='activeMenu == "evol"' 
+      :name='name'
+      />
+      <PokemonMoves v-if='activeMenu == "moves"' 
+      :name='name'
+      />      
+    </div>       
+  </div>  
 </template>
 
 <script>
@@ -28,6 +45,7 @@ import PokemonAbout from '../components/Pokemon/PokemonAbout.vue'
 import PokemonStats from '../components/Pokemon/PokemonStats.vue'
 import PokemonEvol from '../components/Pokemon/PokemonEvol.vue'
 import PokemonMoves from '../components/Pokemon/PokemonMoves.vue'
+import { mapState, mapActions } from 'vuex'
 export default {
     name: 'PokemonPage',
     components: {
@@ -43,36 +61,32 @@ export default {
           index: 0,
           name: '',
           imageUrl: '',
-          types: [],
-          activeMenu: 'about',
-          color: ''         
+          types: '',
+          activeMenu: '',
+          color: '',
+          description: '',
+          egg_groups: [],
+          height: '',
+          weight: ''
         }        
     },
-    created: async function(){
-      //récupération de l'url à afficher :         
-      this.index = this.$route.params.index;
-      //récupération de l'image du pokemon :     
-      this.imageUrl = 'https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other/official-artwork/' + this.index + '.png?raw=true';
-      //Récupération nom et types du pokemon : 
-      try {
-        let res = await fetch('https://pokeapi.co/api/v2/pokemon/' + this.index);
-        let resJson = await res.json();
-        this.name = resJson.forms[0].name;
-        resJson.types.forEach( (t) => {
-              this.types.push(t.type.name);
-        });
-      } catch(error) {
-        console.error(error);
-      }      
-      try {
-        let res = await fetch('https://pokeapi.co/api/v2/pokemon-species/' + this.index);
-        let resJson = await res.json();
-        this.color = resJson.color.name; 
-      } catch (error) {
-        console.error(error);
-      }  
-      //Par défaut la page affiche l'onglet 'about' :
-      this.activeLink = 'about';      
+    created() {  
+      this.index = this.$route.params.index;      
+      this.updateCurrentPokemon(this.index);      
+      this.name = this.currentPokemon.name;
+      this.imageUrl = this.currentPokemon.imageUrl;
+      this.types = this.currentPokemon.types;
+      this.color = this.currentPokemon.color;  
+      this.description = this.currentPokemon.description;      
+      this.height = this.currentPokemon.height;
+      this.weight = this.currentPokemon.weight; 
+      this.color = this.currentPokemon.color; 
+      this.egg_groups = this.currentPokemon.egg_groups; 
+      this.types = this.currentPokemon.types;
+      this.abilities = this.currentPokemon.abilities;
+      this.activeMenu = 'about';      
+      this.activeLink = 'about'; 
+      this.description = this.currentPokemon.description;
     },    
     methods: {          
       selectMenu(event){ 
@@ -84,7 +98,11 @@ export default {
           menuEl.className = 'activeMenu';
         }  
         this.activeMenu = menuStr;
-      }
+      },
+      ...mapActions(['updateCurrentPokemon'])
+    },
+    computed: {
+        ...mapState(['pokemons','currentPokemon'])
     }
 }
 </script>

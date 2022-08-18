@@ -24,7 +24,7 @@ export default {
             <div class='typesWrapper'>
                 <p v-for='type in types' :key="type" class='pokemonType'>{{ type }}</p>                
             </div>
-            <div class='imgWrapper'><img :src='imageUrl' alt='Pokemon' class='pokemonImg'></div>            
+            <div class='imgWrapper'><img :src="`https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other/official-artwork/${index}.png?raw=true`" alt='Pokemon' class='pokemonImg'></div>            
         </header>        
     </div>
 </template>
