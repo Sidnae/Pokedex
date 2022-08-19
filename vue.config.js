@@ -3,5 +3,5 @@ module.exports = defineConfig({
   transpileDependencies: true
 })
 module.exports = {
-  publicPath: "/gh-pages/"
+  publicPath: "/Pokedex/"
 }
